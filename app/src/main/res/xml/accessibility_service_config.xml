@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Accessibility Service Configuration
+    ════════════════════════════════════
+    This XML config is the FIRST thing Android reads when loading the service.
+    ScreenTextAccessibilityService also sets these programmatically in
+    onServiceConnected() as a belt-and-suspenders approach.
+
+    accessibilityEventTypes:
+      TYPE_WINDOW_STATE_CHANGED    — fired when the foreground app changes
+      TYPE_WINDOW_CONTENT_CHANGED  — fired when content updates (new messages, etc.)
+      TYPE_VIEW_SCROLLED           — fired when the user scrolls
+
+    canRetrieveWindowContent="true"
+      ← CRITICAL: without this, getRootInActiveWindow() returns null and
+        we cannot read ANY text from other apps.
+
+    flagRetrieveInteractiveWindows
+      ← CRITICAL: allows getWindows() to return ALL windows (dialogs, overlays,
+        split-screen panes) not just the top-most focused window.
+
+    flagReportViewIds
+      ← Useful for debugging; lets us log view resource names.
+-->
+<accessibility-service
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeViewScrolled"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagRetrieveInteractiveWindows|flagReportViewIds|flagRequestEnhancedWebAccessibility"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_service_description"
+    android:notificationTimeout="100"
+    android:packageNames=""
+    android:settingsActivity=".ui.MainActivity" />
