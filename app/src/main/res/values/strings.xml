@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Screen Translator</string>
+    <string name="accessibility_service_label">Screen Translator</string>
+    <string name="accessibility_service_description">
+        Screen Translator reads text visible on your screen to provide instant translations.
+        It only reads text when you tap or drag the floating bubble. No data is stored or sent
+        without your action.
+    </string>
+</resources>
