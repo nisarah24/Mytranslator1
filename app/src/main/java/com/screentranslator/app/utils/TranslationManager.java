@@ -1,4 +1,4 @@
-package com.screentranslator.app.utils;
+package com.screentranslator.app.ui;
 
 import android.os.Handler;
 import android.os.Looper;
