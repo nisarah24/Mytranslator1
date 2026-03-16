@@ -1,4 +1,4 @@
-package com.screentranslator.app.services;
+package com.screentranslator.app.ui;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
