@@ -31,6 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: My-Translator-App
-          path: "**/build/outputs/apk/debug/*.apk"
+          # اب یہ پورے سسٹم میں کسی بھی فولڈر سے APK ڈھونڈ نکالے گا
+          path: "**/*.apk"
           if-no-files-found: error
           
