@@ -2,14 +2,17 @@ name: Android CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      GRADLE_OPTS: -Xmx2048m
 
     steps:
       - uses: actions/checkout@v4
@@ -25,13 +28,11 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew assembleDebug
+        run: ./gradlew clean assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: My-Translator-App
-          # اب یہ پورے سسٹم میں کسی بھی فولڈر سے APK ڈھونڈ نکالے گا
           path: "**/*.apk"
-          if-no-files-found: error
-          
+          if-no-files-found: error          
