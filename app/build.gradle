@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.screentranslator.app.ui'
+    namespace 'com.screentranslator.app'
     compileSdk 34
 
     defaultConfig {
