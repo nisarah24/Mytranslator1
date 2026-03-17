@@ -1,9 +1,11 @@
-No keystores with reference 'default' were found from coworkflows:
+workflows:
   android-build:
     name: Android APK Build
 
     environment:
       java: 17
+      android_signing:
+        - default
 
     scripts:
       - name: Set up Android SDK
@@ -17,4 +19,4 @@ No keystores with reference 'default' were found from coworkflows:
         script: ./gradlew clean assembleDebug --stacktrace
 
     artifacts:
-      - app/build/outputs/apk/debug/*.apkde signing identities.
+      - app/build/outputs/apk/debug/*.apk
