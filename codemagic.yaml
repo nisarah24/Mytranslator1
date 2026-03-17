@@ -4,19 +4,19 @@ workflows:
 
     environment:
       java: 17
+      android_signing:
+        - default
 
     scripts:
-      - name: Check current directory
-        script: pwd
-
-      - name: List all files
-        script: ls -R
+      - name: Set up Android SDK
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
       - name: Make gradlew executable
         script: chmod +x gradlew
 
-      - name: Run Gradle Build
-        script: ./gradlew clean assembleDebug --info
+      - name: Build APK
+        script: ./gradlew clean assembleDebug --stacktrace
 
     artifacts:
-      - app/build/outputs/**/*.apk
+      - app/build/outputs/apk/debug/*.apk
