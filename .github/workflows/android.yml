@@ -1,36 +1,33 @@
-name: Build Android APK
+name: Build APK
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
+      - name: Setup Java
+        uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: 'zulu'
+          java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Grant permission
+        run: chmod +x gradlew
 
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Build APK
-        run: ./gradlew :app:assembleDebug
-
-      - name: List outputs
-        run: ls -R
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
-          name: ScreenTranslator-APK
-          path: app/build/outputs/apk/debug/*.apk
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
