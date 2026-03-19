@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APK Debug
 
 on:
   push:
@@ -10,32 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Java Setup
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Check files
+      - name: Show files
         run: ls -R
 
-      - name: Give permission
+      - name: Permission
         run: chmod +x gradlew
 
-      - name: Clean project
-        run: ./gradlew clean
+      - name: Gradle Version Check
+        run: ./gradlew --version
 
-      - name: Build APK (IMPORTANT)
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Build APK (FULL LOG)
+        run: ./gradlew assembleDebug --stacktrace --info
 
-      - name: Show build folder
-        run: ls -R app/build
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: apk-file
-          path: app/build/outputs/apk/debug/
+      - name: Check output
+        run: ls -R app/build || echo "No build folder"
+        
