@@ -1,48 +1,38 @@
-name: Android Build and Release
+name: Android Build APK
 
 on:
   push:
-    branches: [ main ] # Runs on every push to main
-  workflow_dispatch: # Allows you to run it manually
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Set up JDK 17
+    - name: Setup Java
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
         distribution: 'temurin'
+        java-version: '17'
 
-    - name: Grant Execute Permission for Gradlew
+    - name: Give permission to gradlew
       run: chmod +x gradlew
 
-    # Build the APK (This takes 2-5 minutes)
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug
+    - name: Clean project
+      run: ./gradlew clean
 
-    # Upload APK as an Artifact (Direct Download from Actions)
-    - name: Upload APK Artifact
+    - name: Build APK (IMPORTANT)
+      run: ./gradlew assembleDebug --stacktrace
+
+    - name: Check APK folder
+      run: ls -R app/build/outputs/apk/
+
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: my-translator-app
+        name: apk-file
         path: app/build/outputs/apk/debug/*.apk
-
-    # Optional: Create a Release if you want
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: app/build/outputs/apk/debug/*.apk
-        tag_name: latest-build
-        name: Latest Development Build
-        body: "Automated build of the latest code."
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
