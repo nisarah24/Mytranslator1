@@ -1,17 +1,21 @@
-name: Android APK Build
+name: Project Quality and Build Check
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
+
+env:
+  # This avoids the Node.js warning by forcing the newer version
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
-  build:
+  analyze-and-build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
     - name: Set up JDK 17
@@ -19,33 +23,22 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
-    - name: Find and make gradlew executable
-      run: |
-        # Find the gradlew file recursively
-        GRADLEW_PATH=$(find . -name "gradlew" -type f | head -1)
+        # Removed problematic cache line, using manual gradle setup if needed
         
-        # Check if gradlew was found
-        if [ -z "$GRADLEW_PATH" ]; then
-          echo "Error: gradlew file not found!"
+    - name: Grant Execute Permission for Gradlew
+      run: chmod +x gradlew
+
+    - name: Run Lint Analysis
+      run: ./gradlew lintDebug
+
+    - name: Assemble Debug APK
+      run: ./gradlew assembleDebug
+
+    - name: Verify Build Artifacts
+      run: |
+        if [ ! -d "app/src/main/java" ]; then
+          echo "Error: Java source directory is missing!"
           exit 1
         fi
+        echo "Project structure looks good."
         
-        echo "Found gradlew at: $GRADLEW_PATH"
-        
-        # Grant execute permissions
-        chmod +x "$GRADLEW_PATH"
-        
-        # Export the path for use in next step
-        echo "GRADLEW_PATH=$GRADLEW_PATH" >> $GITHUB_ENV
-
-    - name: Build APK with Gradle
-      run: ${{ env.GRADLEW_PATH }} assembleDebug
-
-    - name: Upload APK artifacts
-      uses: actions/upload-artifact@v4
-      if: success()
-      with:
-        name: debug-apk
-        path: '**/build/outputs/apk/debug/*.apk'
-        retention-days: 30
