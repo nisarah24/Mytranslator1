@@ -1,4 +1,4 @@
-name: Android Build APK
+name: Build Android APK
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Setup Java
@@ -19,20 +19,21 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    # 🔥 IMPORTANT: Android SDK install
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
     - name: Give permission to gradlew
       run: chmod +x gradlew
 
-    - name: Clean project
-      run: ./gradlew clean
-
-    - name: Build APK (IMPORTANT)
+    - name: Build APK
       run: ./gradlew assembleDebug --stacktrace
 
-    - name: Check APK folder
-      run: ls -R app/build/outputs/apk/
+    - name: Show APK files
+      run: ls -R app/build/outputs/
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: apk-file
+        name: my-app-apk
         path: app/build/outputs/apk/debug/*.apk
