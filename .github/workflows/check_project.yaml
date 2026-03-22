@@ -1,1 +1,46 @@
+name: Project Quality and Build Check
 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  analyze-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant Execute Permission for Gradlew
+      run: chmod +x gradlew
+
+    # 1. Check for Syntax Errors and Missing Dependencies
+    - name: Run Lint Analysis
+      run: ./gradlew lintDebug
+
+    # 2. Complete Build Check (To find missing files or code errors)
+    - name: Assemble Debug APK
+      run: ./gradlew assembleDebug
+
+    # 3. Unit Test Check
+    - name: Run Unit Tests
+      run: ./gradlew test
+      
+    # 4. Check for project structure / missing components
+    - name: Verify Build Artifacts
+      run: |
+        if [ ! -f "app/build.gradle" ]; then
+          echo "Critical Error: app/build.gradle is missing!"
+          exit 1
+        fi
+        
