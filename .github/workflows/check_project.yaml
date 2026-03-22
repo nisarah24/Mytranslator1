@@ -1,14 +1,16 @@
-name: Project Quality and Build Check
+name: Android Build and Release
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*' # This will run when you create a tag like v1.0, v1.1
+  workflow_dispatch: # This allows you to run it manually
 
 jobs:
-  analyze-and-build:
+  build-and-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout Repository
@@ -19,28 +21,23 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
     - name: Grant Execute Permission for Gradlew
       run: chmod +x gradlew
 
-    # 1. Check for Syntax Errors and Missing Dependencies
-    - name: Run Lint Analysis
-      run: ./gradlew lintDebug
+    # Build the APK
+    - name: Build Release APK
+      run: ./gradlew assembleRelease
 
-    # 2. Complete Build Check (To find missing files or code errors)
-    - name: Assemble Debug APK
-      run: ./gradlew assembleDebug
-
-    # 3. Unit Test Check
-    - name: Run Unit Tests
-      run: ./gradlew test
-      
-    # 4. Check for project structure / missing components
-    - name: Verify Build Artifacts
-      run: |
-        if [ ! -f "app/build.gradle" ]; then
-          echo "Critical Error: app/build.gradle is missing!"
-          exit 1
-        fi
+    # Upload APK to GitHub Release
+    - name: Create Release and Upload APK
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: app/build/outputs/apk/release/app-release-unsigned.apk
+        name: Release ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
